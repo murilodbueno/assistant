@@ -1,0 +1,61 @@
+# Template: salao de beleza / cabeleireiro
+
+segmento: salao
+tipo: salao de beleza
+
+nome: Studio Hair Exemplo
+endereco: Av. Beleza, 200 - Centro
+telefone_humano: o proprio numero deste WhatsApp
+pagamento: Pix, dinheiro e cartao
+
+labels:
+  variantes: tipo de corte
+  sujeito: nome do cliente
+
+atendimento:
+  saudacao: Posso informar precos, horarios ou agendar corte, escova e tratamentos.
+
+horarios:
+  ter: ["09:00-19:00"]
+  qua: ["09:00-19:00"]
+  qui: ["09:00-19:00"]
+  sex: ["09:00-19:00"]
+  sab: ["08:00-14:00"]
+
+atendimentos_simultaneos: 2
+intervalo_min: 30
+antecedencia_min_horas: 1
+dias_max_agenda: 21
+
+variantes:
+  masculino: corte masculino
+  feminino: corte feminino
+  infantil: ate 12 anos
+
+servicos:
+  - nome: Corte
+    precos: {masculino: 45, feminino: 65, infantil: 35}
+    duracao_min: {masculino: 30, feminino: 45, infantil: 25}
+  - nome: Escova
+    precos: {feminino: 50, infantil: 40}
+    duracao_min: {feminino: 40, infantil: 30}
+  - nome: Corte + escova
+    precos: {unico: 90}
+    duracao_min: {unico: 60}
+  - nome: Hidratacao
+    precos: {feminino: 80, masculino: 70}
+    duracao_min: {feminino: 45, masculino: 40}
+
+pacotes:
+  - nome: Noiva completa
+    preco: 350
+    inclui: [escova, maquiagem leve, teste]
+    observacao: agendar com 15 dias de antecedencia
+
+regras:
+  - Chegar com 10 minutos de antecedencia.
+  - Atrasos acima de 15 minutos podem precisar remarcar.
+
+faq:
+  - pergunta: Voces atendem sem horario marcado?
+    resposta: Preferimos agendamento, mas aceitamos encaixe quando houver vaga.

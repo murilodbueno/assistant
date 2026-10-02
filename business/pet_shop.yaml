@@ -1,0 +1,65 @@
+# Template: pet shop (banho, tosa, hospedagem, creche)
+# Copie este arquivo, renomeie se quiser e preencha com os dados reais da loja.
+
+segmento: pet_shop
+tipo: pet shop de banho e tosa
+
+nome: Pet Shop Exemplo
+endereco: Rua Exemplo, 100 - Centro
+telefone_humano: o proprio numero deste WhatsApp
+pagamento: Pix, dinheiro e cartao
+
+labels:
+  variantes: porte
+  sujeito: nome do pet
+
+atendimento:
+  saudacao: Posso ajudar com precos, horarios ou agendar banho e tosa.
+
+horarios:
+  ter: ["08:00-12:00", "13:00-18:00"]
+  qua: ["08:00-12:00", "13:00-18:00"]
+  qui: ["08:00-12:00", "13:00-18:00"]
+  sex: ["08:00-12:00", "13:00-18:00"]
+  sab: ["08:00-14:00"]
+
+atendimentos_simultaneos: 1
+intervalo_min: 30
+antecedencia_min_horas: 2
+dias_max_agenda: 30
+
+variantes:
+  pequeno: ate 10 kg
+  medio: de 10 a 25 kg
+  grande: acima de 25 kg
+
+servicos:
+  - nome: Banho
+    precos: {pequeno: 50, medio: 70, grande: 90}
+    duracao_min: {pequeno: 60, medio: 90, grande: 120}
+  - nome: Banho e tosa higienica
+    precos: {pequeno: 65, medio: 85, grande: 110}
+    duracao_min: {pequeno: 90, medio: 120, grande: 150}
+  - nome: Banho e tosa completa
+    precos: {pequeno: 80, medio: 110, grande: 150}
+    duracao_min: {pequeno: 120, medio: 150, grande: 180}
+  - nome: Hospedagem
+    precos: {pequeno: 80, medio: 100, grande: 130}
+    duracao_min: {pequeno: 1440, medio: 1440, grande: 1440}
+  - nome: Day care
+    precos: {unico: 60}
+    duracao_min: {unico: 480}
+
+pacotes:
+  - nome: Banho + tosa + hidratacao
+    precos: {pequeno: 120, medio: 150, grande: 190}
+    observacao: sob consulta de disponibilidade
+
+regras:
+  - Vacinas em dia sao obrigatorias.
+  - Pets com pulgas ou carrapatos pagam taxa extra, confirmada no atendimento.
+  - Cancelamentos devem ser avisados com pelo menos 2 horas de antecedencia.
+
+faq:
+  - pergunta: Voces buscam o pet em casa?
+    resposta: Nao no momento.

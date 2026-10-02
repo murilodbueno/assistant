@@ -1,0 +1,18 @@
+{$DOMAIN} {
+    encode gzip
+
+    handle /webhook/* {
+        reverse_proxy app:8000
+    }
+
+    handle /health {
+        reverse_proxy app:8000
+    }
+
+    handle /waha/* {
+        uri strip_prefix /waha
+        reverse_proxy waha:3000
+    }
+
+    respond "Pet Shop Assistant" 200
+}

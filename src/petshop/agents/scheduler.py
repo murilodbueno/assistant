@@ -81,7 +81,7 @@ def run_scheduler(
             set_draft(store, phone, draft)
             if _draft_ready_for_propose(draft):
                 return advance_booking(settings, business, store, calendar, phone, draft)
-            slots_reply = _list_slots_reply(settings, business, calendar, draft, reply)
+            slots_reply = _list_slots_reply(settings, business, store, calendar, draft, reply)
             if slots_reply:
                 return slots_reply
 
@@ -92,7 +92,7 @@ def run_scheduler(
         if action is None and reply:
             set_draft(store, phone, draft)
             if _draft_ready_for_propose(draft) and not draft.get("time"):
-                slots_reply = _list_slots_reply(settings, business, calendar, draft, "")
+                slots_reply = _list_slots_reply(settings, business, store, calendar, draft, "")
                 if slots_reply:
                     return slots_reply
             return reply
@@ -141,6 +141,7 @@ def _draft_ready_for_propose(draft: dict[str, Any]) -> bool:
 def _list_slots_reply(
     settings: Settings,
     business: Business,
+    store: Store,
     calendar: CalendarClient,
     draft: dict[str, Any],
     prefix: str,
@@ -157,6 +158,7 @@ def _list_slots_reply(
         day=day,
         limit=6,
         period=period,
+        store=store,
     )
     if isinstance(slots, str):
         return slots
@@ -188,6 +190,27 @@ def _reschedule_with_llm(
     svc = business.service(appt.service)
     duration = svc.durations.get(appt.size, 60) if svc else 60
     start = datetime.fromisoformat(f"{day_raw}T{time_raw}").replace(tzinfo=settings.tz)
+    slots = available_slots(
+        business,
+        calendar,
+        service_name=appt.service,
+        size_name=appt.size,
+        day=start.date(),
+        limit=48,
+        store=store,
+        exclude_appointment_id=appt.id,
+    )
+    if isinstance(slots, str):
+        return slots
+    time_str = start.strftime("%H:%M")
+    if not any(s.start.strftime("%H:%M") == time_str for s in slots):
+        if slots:
+            formatted = ", ".join(s.start.strftime("%H:%M") for s in slots[:6])
+            return (
+                f"O horario {time_str} nao esta disponivel em {start.strftime('%d/%m')}. "
+                f"Horarios livres: {formatted}"
+            )
+        return f"Nao ha horarios livres em {start.strftime('%d/%m')}. Quer tentar outro dia?"
     result = reschedule_booking(
         store=store,
         calendar=calendar,

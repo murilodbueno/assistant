@@ -11,6 +11,7 @@ from .tools import create_booking
 
 CONFIRM_WORDS = frozenset({"sim", "confirmo", "confirmar", "ok", "pode ser", "isso", "certo", "fechado"})
 REJECT_WORDS = frozenset({"nao", "não", "cancela", "cancelar", "outro", "mudar"})
+REMINDER_CONFIRM = frozenset({"confirmar", "confirmo", "confirmed"})
 
 
 def is_confirmation(message: str) -> bool:
@@ -58,6 +59,27 @@ def format_proposal(
     return msg
 
 
+def try_reminder_reply(
+    settings: Settings,
+    store: Store,
+    phone: str,
+    message: str,
+    business: Business,
+) -> str | None:
+    appt = store.find_active_appointment(phone)
+    if appt is None:
+        return None
+    lowered = normalize(message)
+    if lowered in REMINDER_CONFIRM:
+        when = datetime.fromtimestamp(appt.start_ts, settings.tz).strftime("%d/%m as %H:%M")
+        return (
+            f"Presenca confirmada! Te esperamos em {when} para {appt.service} — {appt.pet_name}."
+        )
+    if lowered == "remarcar" or lowered.startswith("remarcar "):
+        return "Para remarcar, informe o novo dia e horario (ex.: sexta as 14h)."
+    return None
+
+
 def try_confirm_pending(
     settings: Settings,
     business: Business,
@@ -81,12 +103,12 @@ def try_confirm_pending(
             size_name=str(pending["size"]),
             start=start,
         )
+        if not result.get("ok"):
+            return f"Nao foi possivel confirmar: {result.get('error')}"
         set_pending(store, phone, None)
         from .booking_draft import set_draft
 
         set_draft(store, phone, None)
-        if not result.get("ok"):
-            return f"Nao foi possivel confirmar: {result.get('error')}"
         return (
             f"Agendado! {pending['subject']} — {pending['service']} "
             f"em {start.strftime('%d/%m as %H:%M')}."

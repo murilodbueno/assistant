@@ -79,6 +79,7 @@ class CalendarClient:
         duration_min: int,
         *,
         limit: int = 5,
+        extra_busy: list[tuple[datetime, datetime]] | None = None,
     ) -> list[Slot]:
         tz = self.settings.tz
         weekday = day.weekday()
@@ -90,7 +91,9 @@ class CalendarClient:
         max_start = now + timedelta(days=business.max_days_ahead)
         day_start = datetime.combine(day, time.min, tzinfo=tz)
         day_end = day_start + timedelta(days=1)
-        busy = self.list_busy(day_start, day_end) if self.enabled else []
+        busy = list(self.list_busy(day_start, day_end) if self.enabled else [])
+        if extra_busy:
+            busy.extend(extra_busy)
         slots: list[Slot] = []
         step = timedelta(minutes=business.slot_step_min)
         duration = timedelta(minutes=duration_min)

@@ -195,3 +195,55 @@ def test_reject_unavailable_time(tmp_path: Path):
     reply = advance_booking(settings, biz, store, calendar, phone, draft)
     assert "nao esta disponivel" in reply.lower() or "nao ha horarios" in reply.lower()
     assert get_pending(store, phone) is None
+
+
+def test_extract_size_ignores_substring():
+    root = Path(__file__).resolve().parents[1]
+    biz = load_business(root / "business" / "pet_shop.yaml")
+    hints = extract_hints("preciso agendar imediato para o Rex", biz, today=date(2026, 10, 1))
+    assert "size" not in hints
+
+
+def test_reminder_confirmar_reply(tmp_path: Path):
+    root = Path(__file__).resolve().parents[1]
+    settings = _settings(tmp_path / "reminder.db", root / "business" / "pet_shop.yaml")
+    store = Store(settings.db_path)
+    store.init_db()
+    biz = load_business(root / "business" / "pet_shop.yaml")
+    orch = Orchestrator(settings, biz, store, CalendarClient(settings), WhatsAppClient(settings))
+    phone = "5511555555555"
+    start = __import__("datetime").datetime(2026, 10, 3, 14, 0, tzinfo=settings.tz)
+    store.create_appointment(
+        phone=phone,
+        pet_name="Thor",
+        service="Banho",
+        size="grande",
+        start_ts=start.timestamp(),
+        end_ts=start.timestamp() + 3600,
+    )
+    reply = orch.process_message(phone, "confirmar")
+    assert "confirmada" in reply.lower() or "esperamos" in reply.lower()
+
+
+def test_busy_slot_blocks_double_booking(tmp_path: Path):
+    root = Path(__file__).resolve().parents[1]
+    biz = load_business(root / "business" / "pet_shop.yaml")
+    settings = _settings(tmp_path / "busy.db", root / "business" / "pet_shop.yaml")
+    store = Store(settings.db_path)
+    store.init_db()
+    calendar = CalendarClient(settings)
+    day = date(2026, 10, 2)
+    start = __import__("datetime").datetime(2026, 10, 2, 14, 0, tzinfo=settings.tz)
+    store.create_appointment(
+        phone="5511111111111",
+        pet_name="A",
+        service="Banho",
+        size="grande",
+        start_ts=start.timestamp(),
+        end_ts=start.timestamp() + 5400,
+    )
+    slots = __import__("petshop.tools", fromlist=["available_slots"]).available_slots(
+        biz, calendar, service_name="Banho", size_name="grande", day=day, limit=12, store=store
+    )
+    assert isinstance(slots, list)
+    assert not any(s.start.hour == 14 and s.start.minute == 0 for s in slots)

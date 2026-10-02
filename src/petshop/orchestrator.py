@@ -10,7 +10,7 @@ from .agents import classify_intent, run_faq, run_handoff, run_scheduler
 from datetime import datetime
 
 from .booking_draft import get_draft, is_booking_followup, set_draft
-from .booking_state import try_confirm_pending
+from .booking_state import try_confirm_pending, try_reminder_reply
 from .business import Business, load_business
 from .calendar import CalendarClient
 from .config import Settings
@@ -107,6 +107,10 @@ class Orchestrator:
         return reply
 
     def process_message(self, phone: str, message: str) -> str:
+        reminder = try_reminder_reply(self.settings, self.store, phone, message, self.business)
+        if reminder is not None:
+            return reminder
+
         confirmed = try_confirm_pending(
             self.settings, self.business, self.store, self.calendar, phone, message
         )

@@ -220,6 +220,32 @@ class Store:
         with self._conn() as conn:
             conn.execute(f"UPDATE appointments SET {', '.join(fields)} WHERE id = ?", values)
 
+    def busy_intervals_between(
+        self,
+        start_ts: float,
+        end_ts: float,
+        *,
+        exclude_id: int | None = None,
+    ) -> list[tuple[float, float]]:
+        with self._conn() as conn:
+            if exclude_id is None:
+                rows = conn.execute(
+                    """
+                    SELECT start_ts, end_ts FROM appointments
+                    WHERE status = 'confirmed' AND start_ts < ? AND end_ts > ?
+                    """,
+                    (end_ts, start_ts),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    """
+                    SELECT start_ts, end_ts FROM appointments
+                    WHERE status = 'confirmed' AND start_ts < ? AND end_ts > ? AND id != ?
+                    """,
+                    (end_ts, start_ts, exclude_id),
+                ).fetchall()
+        return [(float(row["start_ts"]), float(row["end_ts"])) for row in rows]
+
     def appointments_between(self, start_ts: float, end_ts: float) -> list[Appointment]:
         with self._conn() as conn:
             rows = conn.execute(

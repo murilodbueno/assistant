@@ -92,6 +92,13 @@ def business_context(business: Business) -> dict[str, Any]:
     }
 
 
+def resolve_service_size(business: Business, svc: Service, size_name: str) -> str | None:
+    wanted = normalize(size_name)
+    if wanted in svc.prices:
+        return wanted
+    return business.size(size_name)
+
+
 def available_slots(
     business: Business,
     calendar: CalendarClient,
@@ -101,20 +108,41 @@ def available_slots(
     day: date,
     limit: int = 5,
     period: Period = None,
+    store: Store | None = None,
+    exclude_appointment_id: int | None = None,
 ) -> list[Slot] | str:
+    from datetime import datetime, time
+
     from .booking_draft import filter_slots_by_period
 
     svc = business.service(service_name)
     if svc is None:
         return f"Servico nao encontrado: {service_name}"
-    size = business.size(size_name)
+    size = resolve_service_size(business, svc, size_name)
     if size is None:
-        return f"{business.variant_label.capitalize()} invalido: {size_name}. Use: {', '.join(business.sizes)}"
+        keys = ", ".join(sorted(set(svc.prices) | set(business.sizes)))
+        return f"{business.variant_label.capitalize()} invalido: {size_name}. Use: {keys}"
     duration = svc.durations.get(size)
     if duration is None:
         return f"Duracao nao definida para {service_name} / {size}"
+    extra_busy: list[tuple[datetime, datetime]] = []
+    if store is not None:
+        tz = calendar.settings.tz
+        day_start = datetime.combine(day, time.min, tzinfo=tz)
+        day_end = day_start + timedelta(days=1)
+        for start_ts, end_ts in store.busy_intervals_between(
+            day_start.timestamp(),
+            day_end.timestamp(),
+            exclude_id=exclude_appointment_id,
+        ):
+            extra_busy.append(
+                (
+                    datetime.fromtimestamp(start_ts, tz),
+                    datetime.fromtimestamp(end_ts, tz),
+                )
+            )
     fetch_limit = limit * 3 if period else limit
-    slots = calendar.free_slots(business, day, duration, limit=fetch_limit)
+    slots = calendar.free_slots(business, day, duration, limit=fetch_limit, extra_busy=extra_busy)
     if period:
         slots = filter_slots_by_period(slots, period)
     return slots[:limit]
@@ -134,13 +162,15 @@ def create_booking(
     svc = business.service(service_name)
     if svc is None:
         return {"ok": False, "error": "servico invalido"}
-    size = business.size(size_name)
+    size = resolve_service_size(business, svc, size_name)
     if size is None:
         return {"ok": False, "error": "porte invalido"}
     duration = svc.durations.get(size)
     if duration is None:
         return {"ok": False, "error": "duracao invalida"}
     end = start + timedelta(minutes=duration)
+    if store.busy_intervals_between(start.timestamp(), end.timestamp()):
+        return {"ok": False, "error": "horario indisponivel"}
     title = f"{svc.name} - {pet_name}"
     description = (
         f"Cliente: {phone}\n{business.subject_label.capitalize()}: {pet_name}\n"
@@ -177,6 +207,10 @@ def reschedule_booking(
     if appt is None or appt.status != "confirmed":
         return {"ok": False, "error": "agendamento nao encontrado"}
     new_end = new_start + timedelta(minutes=duration_min)
+    if store.busy_intervals_between(
+        new_start.timestamp(), new_end.timestamp(), exclude_id=appointment_id
+    ):
+        return {"ok": False, "error": "horario indisponivel"}
     if appt.gcal_event_id:
         calendar.update_event(appt.gcal_event_id, start=new_start, end=new_end)
     store.update_appointment(appointment_id, start_ts=new_start.timestamp(), end_ts=new_end.timestamp())

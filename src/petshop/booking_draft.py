@@ -9,7 +9,7 @@ from .business import Business, normalize
 from .calendar import CalendarClient, Slot
 from .config import Settings
 from .store import Store
-from .tools import available_slots
+from .tools import available_slots, resolve_service_size
 
 Period = Literal["manha", "tarde", "noite"]
 
@@ -182,6 +182,7 @@ def advance_booking(
             day=day,
             limit=12,
             period=period,
+            store=store,
         )
         if isinstance(slots, str):
             return slots
@@ -208,6 +209,7 @@ def advance_booking(
         day=day,
         limit=48,
         period=period,
+        store=store,
     )
     if isinstance(slots, str):
         return slots
@@ -255,6 +257,10 @@ def _missing_fields(draft: dict[str, Any], business: Business) -> list[str]:
         missing.append("servico")
     if not draft.get("size"):
         missing.append(business.variant_label)
+    elif draft.get("service"):
+        svc = business.service(str(draft["service"]))
+        if svc is None or resolve_service_size(business, svc, str(draft["size"])) is None:
+            missing.append(business.variant_label)
     elif business.size(str(draft["size"])) is None:
         missing.append(business.variant_label)
     if not draft.get("subject"):
@@ -301,10 +307,9 @@ def _extract_service(lowered: str, business: Business) -> str | None:
 
 
 def _extract_size(lowered: str, business: Business) -> str | None:
+    tokens = set(lowered.split())
     for key in business.sizes:
-        if key in lowered.split():
-            return key
-        if key in lowered:
+        if key in tokens:
             return key
     return None
 

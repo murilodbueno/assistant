@@ -14,5 +14,5 @@
         reverse_proxy waha:3000
     }
 
-    respond "Pet Shop Assistant" 200
+    respond "Assistant" 200
 }

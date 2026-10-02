@@ -1,7 +1,7 @@
 import hashlib
 import hmac
 
-from petshop.whatsapp import verify_hmac
+from assistant.whatsapp import verify_hmac
 
 
 def test_verify_hmac_valid():

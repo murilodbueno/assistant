@@ -13,7 +13,7 @@ from google.oauth2 import service_account
 from .business import Business
 from .config import Settings
 
-log = logging.getLogger("petshop.calendar")
+log = logging.getLogger("assistant.calendar")
 
 SCOPES = ["https://www.googleapis.com/auth/calendar"]
 RequestFn = Callable[..., Any]

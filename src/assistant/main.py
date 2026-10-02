@@ -16,7 +16,7 @@ from .store import Store
 from .whatsapp import WhatsAppClient, verify_hmac
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
-log = logging.getLogger("petshop.main")
+log = logging.getLogger("assistant.main")
 
 settings = load_settings()
 business = load_business(settings.business_file)
@@ -51,7 +51,7 @@ async def lifespan(_app: FastAPI):
             pass
 
 
-app = FastAPI(title="Pet Shop Assistant", lifespan=lifespan)
+app = FastAPI(title="Assistant", lifespan=lifespan)
 
 
 @app.get("/health")
@@ -79,4 +79,4 @@ async def waha_webhook(
 def run() -> None:
     import uvicorn
 
-    uvicorn.run("petshop.main:app", host="0.0.0.0", port=8000, reload=False)
+    uvicorn.run("assistant.main:app", host="0.0.0.0", port=8000, reload=False)

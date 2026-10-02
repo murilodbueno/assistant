@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from petshop.business import list_templates, load_business, normalize
+from assistant.business import list_templates, load_business, normalize
 
 
 def test_normalize():

@@ -10,7 +10,7 @@ from typing import Any
 
 from .config import Settings
 
-log = logging.getLogger("petshop.llm")
+log = logging.getLogger("assistant.llm")
 
 
 @dataclass(frozen=True)

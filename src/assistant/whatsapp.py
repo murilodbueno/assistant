@@ -9,7 +9,7 @@ import requests
 
 from .config import Settings
 
-log = logging.getLogger("petshop.whatsapp")
+log = logging.getLogger("assistant.whatsapp")
 
 
 def verify_hmac(body: bytes, signature: str, secret: str) -> bool:

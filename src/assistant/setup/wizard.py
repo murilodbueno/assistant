@@ -175,10 +175,10 @@ class SetupWizard:
         if choice in ("2", "template", "modelo"):
             self.step = Step.TEMPLATE
             templates = "\n".join(f"  - {name}" for name in available_templates(business_dir=self.business_dir))
-            return f"Qual template usar como base?\n{templates}\n\nDigite o nome (ex.: pet_shop ou salao)."
+            return f"Qual template usar como base?\n{templates}\n\nDigite o nome (ex.: salao ou barbearia)."
         if choice in ("3", "editar", "edit"):
             self.step = Step.TEMPLATE
-            return "Digite o caminho do arquivo YAML (ex.: business/pet_shop.yaml)."
+            return "Digite o caminho do arquivo YAML (ex.: business/salao.yaml)."
         return "Escolha 1, 2 ou 3."
 
     def _handle_template(self, text: str) -> str:
@@ -209,7 +209,7 @@ class SetupWizard:
     def _handle_segment(self, text: str) -> str:
         segment = _slug_segment(text)
         if not segment:
-            return "Informe um identificador curto (ex.: pet_shop, salao, barbearia)."
+            return "Informe um identificador curto (ex.: salao, barbearia, clinica)."
         self.draft["segmento"] = segment
         hint = NICHE_HINTS.get(segment, {})
         self.draft.setdefault("tipo", hint.get("tipo", segment.replace("_", " ")))
@@ -396,7 +396,7 @@ class SetupWizard:
             f"Arquivo salvo em: {rel}\n\n"
             f"Proximo passo — no .env:\n"
             f"  BUSINESS_FILE={rel.as_posix()}\n\n"
-            "Depois reinicie o assistente ou rode: petshop-simulator"
+            "Depois reinicie o assistente ou rode: assistant-simulator"
         )
 
     def _apply_defaults(self) -> None:

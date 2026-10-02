@@ -3,8 +3,6 @@
 Cada arquivo YAML descreve **um nicho**. Para ativar, aponte `BUSINESS_FILE` no `.env`:
 
 ```env
-BUSINESS_FILE=business/pet_shop.yaml
-# ou
 BUSINESS_FILE=business/salao.yaml
 ```
 
@@ -39,7 +37,7 @@ O código do assistente é o mesmo para todos os nichos; só muda o YAML carrega
 Para montar ou editar um YAML conversando no terminal:
 
 ```bash
-petshop-setup
+assistant-setup
 ```
 
 O assistente guia passo a passo: tipo de negócio, horários, serviços, preços, FAQ e salva o arquivo em `business/`.

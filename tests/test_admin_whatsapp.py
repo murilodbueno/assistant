@@ -3,13 +3,13 @@ from unittest.mock import patch
 
 import yaml
 
-from petshop.business import load_business
-from petshop.calendar import CalendarClient
-from petshop.config import Settings
-from petshop.orchestrator import Orchestrator
-from petshop.setup.admin import WhatsAppAdmin
-from petshop.store import Store
-from petshop.whatsapp import WhatsAppClient
+from assistant.business import load_business
+from assistant.calendar import CalendarClient
+from assistant.config import Settings
+from assistant.orchestrator import Orchestrator
+from assistant.setup.admin import WhatsAppAdmin
+from assistant.store import Store
+from assistant.whatsapp import WhatsAppClient
 
 
 def _settings(tmp_path: Path, business_file: Path) -> Settings:
@@ -81,7 +81,7 @@ def test_admin_add_faq(tmp_path: Path):
     assert any("cartao" in item["pergunta"].lower() for item in data["faq"])
 
 
-@patch("petshop.agents.router.chat_json", return_value={"intent": "outro"})
+@patch("assistant.agents.router.chat_json", return_value={"intent": "outro"})
 def test_owner_config_does_not_go_to_clients(_mock, tmp_path: Path):
     biz_path = _copy_business_template(tmp_path)
     settings = _settings(tmp_path, biz_path)

@@ -14,14 +14,14 @@ sudo usermod -aG docker $USER
 ## 2. Arquivos na VPS
 
 ```bash
-git clone <seu-repo> petshop-assistant
-cd petshop-assistant
+git clone <seu-repo> assistant
+cd assistant
 cp .env.example .env
 # Edite .env com chaves reais (LLM, WAHA, Google, OWNER_PHONE)
 mkdir -p secrets data backups
 # Copie google-service-account.json para secrets/
-# Escolha o template do nicho em business/ (ex.: pet_shop.yaml, salao.yaml)
-nano business/pet_shop.yaml
+# Escolha o template do nicho em business/ (ex.: salao.yaml)
+nano business/salao.yaml
 ```
 
 Variaveis extras para o Compose:
@@ -41,7 +41,7 @@ docker compose logs -f app
 ## 4. WhatsApp (WAHA)
 
 1. Acesse `https://bot.seudominio.com.br/waha/` (proteja com basic auth no Caddy se exposto).
-2. Crie sessao `default` e escaneie o QR code com o WhatsApp do pet shop.
+2. Crie sessao `default` e escaneie o QR code com o WhatsApp do negocio.
 3. Confirme webhook em `/webhook/waha`.
 
 ## 5. Google Agenda
@@ -56,7 +56,7 @@ docker compose logs -f app
 Cron diario:
 
 ```bash
-0 3 * * * cd /opt/petshop-assistant && sqlite3 data/petshop.db ".backup backups/petshop-$(date +\%F).db"
+0 3 * * * cd /opt/assistant && sqlite3 data/assistant.db ".backup backups/assistant-$(date +\%F).db"
 ```
 
 ## 7. Healthcheck
@@ -66,5 +66,5 @@ Configure UptimeRobot ou similar em `https://bot.seudominio.com.br/health`.
 ## 8. Simulador local (sem WhatsApp)
 
 ```bash
-petshop-simulator
+assistant-simulator
 ```

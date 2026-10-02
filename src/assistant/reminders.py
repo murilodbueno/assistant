@@ -10,7 +10,7 @@ from .config import Settings
 from .store import Store
 from .whatsapp import WhatsAppClient
 
-log = logging.getLogger("petshop.reminders")
+log = logging.getLogger("assistant.reminders")
 
 
 async def reminder_loop(

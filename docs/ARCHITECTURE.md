@@ -1,6 +1,6 @@
-# Pet Shop Assistant — Plano de Arquitetura (MVP)
+# Assistant — Plano de Arquitetura (MVP)
 
-> Assistente WhatsApp multi-agente para pet shops de banho e tosa: atende clientes, agenda no Google Calendar, envia lembretes e escala para o dono.
+> Assistente WhatsApp multi-agente para pequenos negócios: atende clientes, agenda no Google Calendar, envia lembretes e escala para o dono.
 
 ---
 
@@ -10,11 +10,11 @@
 Cliente WhatsApp
       │
       ▼
-   [ WAHA ]  ← QR code, número atual do pet shop
+   [ WAHA ]  ← QR code, número WhatsApp do negócio
       │ webhook (HMAC)
       ▼
 ┌─────────────────────────────────────┐
-│  FastAPI (petshop-assistant)        │
+│  FastAPI (assistant)                │
 │  ┌───────────┐                      │
 │  │ Orquestrador │                   │
 │  └─────┬─────┘                      │
@@ -164,7 +164,7 @@ reminder_log(appointment_id INTEGER, sent_at REAL)
 services:
   caddy:      # reverse proxy, TLS automático
   waha:       # WhatsApp (devlikeapro/waha)
-  app:        # petshop-assistant (FastAPI + uvicorn)
+  app:        # assistant (FastAPI + uvicorn)
 ```
 
 Volumes:
@@ -193,7 +193,7 @@ WAHA webhook → https://bot.seudominio.com/webhook/waha
 
 ### 7.4 Backup
 
-- Cron diário: `sqlite3 .backup data/petshop.db backups/petshop-$(date +%F).db`
+- Cron diário: `sqlite3 .backup data/assistant.db backups/assistant-$(date +%F).db`
 - Retenção 7 dias local; opcional rsync/S3 depois.
 
 ### 7.5 Monitoramento MVP
@@ -219,19 +219,14 @@ WAHA webhook → https://bot.seudominio.com/webhook/waha
 
 ## 9. Templates por nicho (`business/`)
 
-Cada tipo de negócio tem seu YAML em `business/`:
-
-| Arquivo | Nicho |
-|---------|-------|
-| `pet_shop.yaml` | Pet shop |
-| `salao.yaml` | Salão / cabeleireiro |
+Cada tipo de negócio tem seu YAML em `business/`. Veja [business/README.md](../business/README.md) para templates disponíveis.
 
 Novo nicho = novo arquivo + `BUSINESS_FILE=business/novo_nicho.yaml`. O código do assistente não muda.
 
 ## 10. Estrutura de código
 
 ```
-src/petshop/
+src/assistant/
   config.py          ✅
   business.py        ✅
   store.py           SQLite
@@ -264,8 +259,8 @@ docs/DEPLOY.md
 ## 10. Simulador (dev sem WhatsApp)
 
 ```bash
-petshop-simulator
-# ou: python -m petshop.simulator
+assistant-simulator
+# ou: python -m assistant.simulator
 ```
 
 Loop REPL: digita como cliente → orquestrador responde → mostra tool calls no debug.

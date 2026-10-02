@@ -8,7 +8,7 @@ from ..config import Settings
 from ..llm import chat
 from ..tools import business_context, price_reply, search_faq
 
-log = logging.getLogger("petshop.faq")
+log = logging.getLogger("assistant.faq")
 
 DAY_LABELS = {
     "seg": "Segunda",

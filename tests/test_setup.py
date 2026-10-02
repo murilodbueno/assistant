@@ -2,10 +2,10 @@ from pathlib import Path
 
 import pytest
 
-from petshop.business import load_business
-from petshop.business_io import dump_business
-from petshop.setup.parsers import parse_hours, parse_prices, parse_variants
-from petshop.setup.wizard import SetupWizard, Step
+from assistant.business import load_business
+from assistant.business_io import dump_business
+from assistant.setup.parsers import parse_hours, parse_prices, parse_variants
+from assistant.setup.wizard import SetupWizard, Step
 
 
 def test_parse_hours_week_range():

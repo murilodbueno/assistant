@@ -21,7 +21,7 @@ from ..llm import chat_json
 from ..store import Store
 from ..tools import available_slots, cancel_booking, reschedule_booking
 
-log = logging.getLogger("petshop.scheduler")
+log = logging.getLogger("assistant.scheduler")
 
 
 def _system_prompt(business: Business) -> str:

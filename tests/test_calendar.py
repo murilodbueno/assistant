@@ -2,9 +2,9 @@ from datetime import date, datetime
 from pathlib import Path
 from unittest.mock import MagicMock
 
-from petshop.business import load_business
-from petshop.calendar import CalendarClient
-from petshop.config import Settings
+from assistant.business import load_business
+from assistant.calendar import CalendarClient
+from assistant.config import Settings
 
 
 def _settings_without_google() -> Settings:

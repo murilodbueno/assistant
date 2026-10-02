@@ -91,7 +91,7 @@ def load_settings() -> Settings:
         debounce_sec=_float("DEBOUNCE_SEC", 2.0),
         reminder_start_hour=_int("REMINDER_START_HOUR", 9),
         reminder_end_hour=_int("REMINDER_END_HOUR", 19),
-        business_file=_path("BUSINESS_FILE", "business/pet_shop.yaml"),
-        db_path=_path("DB_PATH", "data/petshop.db"),
+        business_file=_path("BUSINESS_FILE", "business/salao.yaml"),
+        db_path=_path("DB_PATH", "data/assistant.db"),
         timezone=os.getenv("TIMEZONE", "").strip() or "America/Sao_Paulo",
     )

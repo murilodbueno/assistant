@@ -1,12 +1,12 @@
 from pathlib import Path
 from unittest.mock import patch
 
-from petshop.business import load_business
-from petshop.calendar import CalendarClient
-from petshop.config import Settings
-from petshop.orchestrator import Orchestrator
-from petshop.store import Store
-from petshop.whatsapp import WhatsAppClient
+from assistant.business import load_business
+from assistant.calendar import CalendarClient
+from assistant.config import Settings
+from assistant.orchestrator import Orchestrator
+from assistant.store import Store
+from assistant.whatsapp import WhatsAppClient
 
 
 def _settings() -> Settings:

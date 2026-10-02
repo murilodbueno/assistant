@@ -7,7 +7,7 @@ from ..business import Business, normalize
 from ..config import Settings
 from ..llm import chat_json
 
-log = logging.getLogger("petshop.router")
+log = logging.getLogger("assistant.router")
 
 Intent = Literal[
     "faq",

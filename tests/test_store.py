@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from petshop.store import Store
+from assistant.store import Store
 
 
 def test_store_messages_and_appointment(tmp_path: Path):

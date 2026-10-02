@@ -18,7 +18,7 @@ from .setup.admin import WhatsAppAdmin
 from .store import Store
 from .whatsapp import WhatsAppClient
 
-log = logging.getLogger("petshop.orchestrator")
+log = logging.getLogger("assistant.orchestrator")
 
 
 @dataclass

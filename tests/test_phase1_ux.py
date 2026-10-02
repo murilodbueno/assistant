@@ -2,15 +2,15 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
-from petshop.agents.router import classify_intent
-from petshop.booking_state import format_proposal, is_confirmation, try_confirm_pending
-from petshop.business import load_business
-from petshop.calendar import CalendarClient
-from petshop.config import Settings
-from petshop.orchestrator import Orchestrator
-from petshop.store import Store
-from petshop.tools import price_reply
-from petshop.whatsapp import WhatsAppClient
+from assistant.agents.router import classify_intent
+from assistant.booking_state import format_proposal, is_confirmation, try_confirm_pending
+from assistant.business import load_business
+from assistant.calendar import CalendarClient
+from assistant.config import Settings
+from assistant.orchestrator import Orchestrator
+from assistant.store import Store
+from assistant.tools import price_reply
+from assistant.whatsapp import WhatsAppClient
 
 
 def _settings(db: Path, biz: Path) -> Settings:
@@ -85,11 +85,11 @@ def test_booking_requires_confirmation(tmp_path: Path):
         "service": "Banho",
         "size": "grande",
         "subject_name": "Thor",
-        "day": "2026-10-10",
+        "day": "2026-10-09",
         "time": "14:00",
     }
-    with patch("petshop.agents.router.chat_json", return_value={"intent": "agendar"}), patch(
-        "petshop.agents.scheduler.chat_json", return_value=propose
+    with patch("assistant.agents.router.chat_json", return_value={"intent": "agendar"}), patch(
+        "assistant.agents.scheduler.chat_json", return_value=propose
     ):
         reply = orch.process_message(phone, "quero banho pro Thor grande sexta 14h")
     assert "confirmar" in reply.lower()
@@ -110,7 +110,7 @@ def test_booking_rejection_clears_pending(tmp_path: Path):
     calendar = CalendarClient(settings)
     phone = "5511888888888"
     start = datetime(2026, 10, 10, 14, 0, tzinfo=settings.tz)
-    from petshop.booking_state import set_pending
+    from assistant.booking_state import set_pending
 
     set_pending(
         store,

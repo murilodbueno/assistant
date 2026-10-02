@@ -2,10 +2,10 @@ from datetime import date, timedelta
 from pathlib import Path
 from unittest.mock import patch
 
-from petshop.agents.router import classify_intent
-from petshop.agents.scheduler import run_scheduler
-from petshop.booking_state import get_pending
-from petshop.booking_draft import (
+from assistant.agents.router import classify_intent
+from assistant.agents.scheduler import run_scheduler
+from assistant.booking_state import get_pending
+from assistant.booking_draft import (
     advance_booking,
     detect_period,
     extract_hints,
@@ -13,12 +13,12 @@ from petshop.booking_draft import (
     get_draft,
     merge_draft,
 )
-from petshop.business import load_business
-from petshop.calendar import CalendarClient, Slot
-from petshop.config import Settings
-from petshop.orchestrator import Orchestrator
-from petshop.store import Store
-from petshop.whatsapp import WhatsAppClient
+from assistant.business import load_business
+from assistant.calendar import CalendarClient, Slot
+from assistant.config import Settings
+from assistant.orchestrator import Orchestrator
+from assistant.store import Store
+from assistant.whatsapp import WhatsAppClient
 
 
 def _settings(db: Path, biz: Path) -> Settings:
@@ -115,7 +115,7 @@ def test_faq_question_is_not_booking_followup():
         "day": "2026-10-02",
         "period": "tarde",
     }
-    from petshop.booking_draft import is_booking_followup
+    from assistant.booking_draft import is_booking_followup
 
     assert not is_booking_followup("faz tosa de poodle estilo exposicao?", biz, draft)
 
@@ -166,7 +166,7 @@ def test_list_slots_with_time_proposes_instead(tmp_path: Path):
         "action": "list_slots",
         "day": day,
     }
-    with patch("petshop.agents.scheduler.chat_json", return_value=llm_reply):
+    with patch("assistant.agents.scheduler.chat_json", return_value=llm_reply):
         reply = run_scheduler(settings, biz, store, calendar, phone, "pode ser as 14h", [], "agendar")
 
     assert "confirmar" in reply.lower()
@@ -242,7 +242,7 @@ def test_busy_slot_blocks_double_booking(tmp_path: Path):
         start_ts=start.timestamp(),
         end_ts=start.timestamp() + 5400,
     )
-    slots = __import__("petshop.tools", fromlist=["available_slots"]).available_slots(
+    slots = __import__("assistant.tools", fromlist=["available_slots"]).available_slots(
         biz, calendar, service_name="Banho", size_name="grande", day=day, limit=12, store=store
     )
     assert isinstance(slots, list)

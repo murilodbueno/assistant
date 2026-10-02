@@ -1,6 +1,6 @@
 # Assistant — WhatsApp multi-agente para pequenos negócios
 
-Assistente virtual via **WhatsApp** para pet shops, salões e negócios similares: atende clientes, responde FAQ, agenda serviços no **Google Calendar**, envia lembretes e escala para o dono quando necessário.
+Assistente virtual via **WhatsApp** para pequenos negócios de serviços: atende clientes, responde FAQ, agenda no **Google Calendar**, envia lembretes e escala para o dono quando necessário.
 
 Stack: **Python 3.11+**, **FastAPI**, **WAHA** (QR code), **SQLite**, **Docker**.
 
@@ -14,8 +14,8 @@ Stack: **Python 3.11+**, **FastAPI**, **WAHA** (QR code), **SQLite**, **Docker**
 - **Filtro manhã/tarde** e validação de horários ocupados
 - **Lembretes** automáticos no dia anterior
 - **Painel admin via WhatsApp** (`configurar`, `preco ...`, `faq ...`)
-- **Setup interativo** no terminal (`petshop-setup`)
-- **Templates por nicho** em `business/` (pet shop, salão, etc.)
+- **Setup interativo** no terminal (`assistant-setup`)
+- **Templates por nicho** em `business/` (salão, barbearia, etc.)
 
 ---
 
@@ -33,15 +33,15 @@ pip install -e ".[dev]"
 cp .env.example .env
 # Edite .env — veja seção Variáveis abaixo
 
-petshop-setup          # wizard opcional para preencher business/*.yaml
-petshop-simulator      # simula atendimento no terminal
+assistant-setup          # wizard opcional para preencher business/*.yaml
+assistant-simulator      # simula atendimento no terminal
 pytest -q              # testes
 ```
 
 API local (webhook WAHA):
 
 ```bash
-uvicorn petshop.main:app --host 0.0.0.0 --port 8000
+uvicorn assistant.main:app --host 0.0.0.0 --port 8000
 curl http://localhost:8000/health
 ```
 
@@ -54,7 +54,7 @@ Copie `.env.example` para `.env`. Principais:
 | Variável | Descrição |
 |----------|-----------|
 | `LLM_API_KEY` | Chave da API compatível com OpenAI (router/FAQ/scheduler) |
-| `BUSINESS_FILE` | Template YAML (`business/pet_shop.yaml`) |
+| `BUSINESS_FILE` | Template YAML do nicho (ex.: `business/salao.yaml`) |
 | `OWNER_PHONE` | WhatsApp do dono (admin + handoff) |
 | `WAHA_URL` / `WAHA_API_KEY` | Conexão com WAHA |
 | `WAHA_HMAC_KEY` | **Obrigatório em produção** — valida webhook |
@@ -69,7 +69,7 @@ Copie `.env.example` para `.env`. Principais:
 Escolha ou crie um arquivo em `business/`:
 
 ```env
-BUSINESS_FILE=business/pet_shop.yaml
+BUSINESS_FILE=business/salao.yaml
 ```
 
 Veja [business/README.md](business/README.md) para estrutura do YAML e como adicionar nichos.
@@ -102,7 +102,7 @@ docker compose logs -f app
 ## Estrutura do projeto
 
 ```
-src/petshop/
+src/assistant/
   agents/          # router, faq, scheduler, handoff
   setup/           # wizard CLI + admin WhatsApp
   booking_draft.py # memória de agendamento

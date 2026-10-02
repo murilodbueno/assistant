@@ -307,7 +307,8 @@ def _extract_service(lowered: str, business: Business) -> str | None:
 
 
 def _extract_size(lowered: str, business: Business) -> str | None:
-    tokens = set(lowered.split())
+    tokens = {re.sub(r"[^\w]+", "", part) for part in lowered.split()}
+    tokens.discard("")
     for key in business.sizes:
         if key in tokens:
             return key

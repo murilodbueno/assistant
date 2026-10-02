@@ -6,7 +6,7 @@ from ..config import Settings
 from ..store import Store
 from ..whatsapp import WhatsAppClient
 
-log = logging.getLogger("petshop.handoff")
+log = logging.getLogger("assistant.handoff")
 
 
 def run_handoff(
@@ -21,7 +21,7 @@ def run_handoff(
         return "Vou verificar com a equipe e ja retorno."
     handoff_id = store.create_handoff(client_phone, question)
     msg = (
-        f"[Pet Shop] Cliente {client_phone} perguntou:\n"
+        f"[Assistente] Cliente {client_phone} perguntou:\n"
         f"{question}\n\n"
         f"Responda esta mensagem para repassar ao cliente."
     )

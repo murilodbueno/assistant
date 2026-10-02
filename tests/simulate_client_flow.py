@@ -9,12 +9,12 @@ from datetime import date, timedelta
 from pathlib import Path
 from unittest.mock import patch
 
-from petshop.business import load_business
-from petshop.calendar import CalendarClient
-from petshop.config import Settings
-from petshop.orchestrator import Orchestrator
-from petshop.store import Store
-from petshop.whatsapp import WhatsAppClient
+from assistant.business import load_business
+from assistant.calendar import CalendarClient
+from assistant.config import Settings
+from assistant.orchestrator import Orchestrator
+from assistant.store import Store
+from assistant.whatsapp import WhatsAppClient
 
 ROOT = Path(__file__).resolve().parents[1]
 CLIENT = "5511888777666"
@@ -132,9 +132,9 @@ def simulate_with_llm_mocks(tmp_path: Path) -> Transcript:
 
         return getter
 
-    with patch("petshop.agents.router.chat_json", side_effect=_next_or_default(router_queue)), patch(
-        "petshop.agents.faq.chat", side_effect=_next_or_default(faq_queue)
-    ), patch("petshop.agents.scheduler.chat_json", side_effect=_next_or_default(scheduler_queue)):
+    with patch("assistant.agents.router.chat_json", side_effect=_next_or_default(router_queue)), patch(
+        "assistant.agents.faq.chat", side_effect=_next_or_default(faq_queue)
+    ), patch("assistant.agents.scheduler.chat_json", side_effect=_next_or_default(scheduler_queue)):
         _run_turn(orch, CLIENT, "ola", t)
         _run_turn(orch, CLIENT, "quanto custa banho?", t)
         _run_turn(orch, CLIENT, "quero banho pro Thor, cachorro grande, sexta a tarde", t)
@@ -165,8 +165,8 @@ def simulate_faq_direct(tmp_path: Path) -> Transcript:
     store.init_db()
     orch = Orchestrator(settings, load_business(settings.business_file), store, CalendarClient(settings), WhatsAppClient(settings))
 
-    with patch("petshop.agents.router.chat_json", return_value={"intent": "faq"}), patch(
-        "petshop.agents.faq.chat",
+    with patch("assistant.agents.router.chat_json", return_value={"intent": "faq"}), patch(
+        "assistant.agents.faq.chat",
         return_value=type("R", (), {"content": "Nao no momento."})(),
     ):
         _run_turn(orch, CLIENT, "voces buscam o pet em casa?", t)
